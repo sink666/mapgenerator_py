@@ -1,8 +1,8 @@
 import array
 import random
 
-IMG_W = 300
-IMG_H = 300
+IMG_W = 100
+IMG_H = 100
 PPM_HEADER = f'P6 {IMG_W} {IMG_H} {255} '
 BLACK = [0, 0, 0]
 WHITE = [255, 255, 255]
@@ -18,6 +18,8 @@ def noise() -> int:
 
 
 def field_to_img():
+    image.clear()
+
     for p in field:
         if p == 0:
             image.fromlist(BLACK)
@@ -27,23 +29,20 @@ def field_to_img():
 
 def should_be_wall(x, y) -> bool:
     acc = 0
-    testpoints = [
-        (x-1,y-1), (x,y-1), (x+1,y-1),
-        (x-1,y), (x+1,y),
-        (x-1,y+1), (x,y+1),(x+1,y+1)
-    ]
 
     if x == 0 or x == (IMG_W - 1) or y == 0 or y == (IMG_H - 1):
         return True
 
-    for tp in testpoints:
-        if field[tp[0] + (tp[1] * IMG_W)] == 0:
-            acc += 1
+    for yp in (-1, 0, 1):
+        for xp in (-1, 0, 1):
+            if field[(x + xp) + ((y + yp) * IMG_W)] == 0:
+                acc += 1
         
     if acc >= 4:
         return True
     else:
         return False
+
 
 
 def iterate_world():
@@ -59,6 +58,12 @@ def iterate_world():
     field[:] = newfield
 
 
+def out_to_file(file_num):
+    filename = "test" + str(file_num) + ".ppm"
+
+    with open(filename, 'wb') as f:
+        f.write(bytearray(PPM_HEADER, 'ascii'))
+        image.tofile(f)
 
 
 def main():
@@ -67,14 +72,11 @@ def main():
     for _ in range(IMG_W * IMG_H):
         field.append(noise())
 
-    for _ in range(32):
+    for fv in range(9):
         iterate_world()
+        field_to_img()
+        out_to_file(fv)
 
-    field_to_img()
-
-    with open('test.ppm', 'wb') as f:
-        f.write(bytearray(PPM_HEADER, 'ascii'))
-        image.tofile(f)
 
 if __name__ == '__main__':
     main()
