@@ -3,8 +3,8 @@ import random
 # black, white, red, blue, green, yellow, cyan, magenta
 PALETTE = ['000000','FFFFFF','FF0000','00FF00','0000FF','FFFF00','00FFFF','FF00FF']
 
-def put_file(width, height, data):
-    filename = "test.ppm"
+def put_file(name, width, height, data):
+    filename = name + ".ppm"
 
     with open(filename, 'wb') as f:
         f.write(bytearray(f'P6 {width} {height} {255} ', 'ascii'))
@@ -21,8 +21,7 @@ def main():
         6, 7, 0, 
     ]
 
-    put_file(3, 3, img)
-
+    put_file("testtt", 3, 3, img)
 
 
 if __name__ == '__main__':
