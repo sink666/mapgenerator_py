@@ -1,27 +1,32 @@
 import random
+from PIL import Image, ImageDraw
 
 # black, white, red, blue, green, yellow, cyan, magenta
-PALETTE = ['000000','FFFFFF','FF0000','00FF00','0000FF','FFFF00','00FFFF','FF00FF']
+PALETTE = ['#000000','#FFFFFF','#FF0000','#00FF00','#0000FF','#FFFF00','#00FFFF','#FF00FF']
 
-def put_file(name, width, height, data):
-    filename = name + ".ppm"
+class Poly:
+    def __init__(self, num_sides, xy, bound_sq) -> None:
+        self.sides = []
+        self.xy = xy
 
-    with open(filename, 'wb') as f:
-        f.write(bytearray(f'P6 {width} {height} {255} ', 'ascii'))
+        for _ in range(num_sides):
+            sqgen = (random.randrange(0, bound_sq), random.randrange(0, bound_sq))
+            nextp = (self.xy[0] + sqgen[0], self.xy[1] + sqgen[1])
+            self.sides.append(nextp)
 
-        for p in data:
-            f.write(bytes.fromhex(PALETTE[p]))
 
 
 def main():
-    # random.seed()
-    img = [ 
-        0, 1, 2, 
-        3, 4, 5, 
-        6, 7, 0, 
-    ]
+    random.seed()
 
-    put_file("testtt", 3, 3, img)
+    img = Image.new('RGB', (800, 600), color = PALETTE[1])
+
+    draw = ImageDraw.Draw(img)
+
+    poly = Poly(4, (200, 200), 200)
+    draw.polygon(poly.sides, fill = PALETTE[7])
+
+    img.save("out.png")
 
 
 if __name__ == '__main__':
